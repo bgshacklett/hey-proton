@@ -42,19 +42,23 @@ if date :zone "+0000" :matches "received" "julian" "*" {
 set :eval "mail_age_in_days" "${current_julian_day} - ${received_julian_day}";
 set :eval "migration_julian_day" "${current_julian_day} - ${migration_date_in_days_ago}";
 
+# Floor for grace-period branch: if computed expiry would be shorter than
+# expiry_grace_period_days, use the grace period instead.
+set :eval "mail_age_plus_grace" "${mail_age_in_days} + ${expiry_grace_period_days}";
+
 # Relative expiration dates
 # Expire newsletters and paper trail from the day they were received
 # Warning - this will expire existing emails for initial inbox cleanup.
-if string :comparator "i;ascii-numeric" :value "ge" "${mail_age_in_days}" "${newsletter_expiry_days}" {
-  # initial test run
+if string :comparator "i;ascii-numeric" :value "ge" "${mail_age_plus_grace}" "${newsletter_expiry_days}" {
+  # initial test run, or within grace window of target expiry
   set "newsletter_expiry_relative_days" "${expiry_grace_period_days}";
 } else {
   # usual behavior for new incoming emails
   set :eval "newsletter_expiry_relative_days" "-${mail_age_in_days} + ${newsletter_expiry_days}";
 }
 
-if string :comparator "i;ascii-numeric" :value "ge" "${mail_age_in_days}" "${paper_trail_expiry_days}" {
-  # initial test run
+if string :comparator "i;ascii-numeric" :value "ge" "${mail_age_plus_grace}" "${paper_trail_expiry_days}" {
+  # initial test run, or within grace window of target expiry
   set "paper_trail_expiry_relative_days" "${expiry_grace_period_days}";
 } else {
   # usual behavior for new incoming emails
