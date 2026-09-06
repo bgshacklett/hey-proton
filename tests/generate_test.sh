@@ -99,7 +99,7 @@ grep -q "$filter05_marker" "$DIST/hey-proton-01 - spam & ignored.sieve" 2>/dev/n
 # 4a. Mailing-list rule expands from mailing-lists.txt into hey-proton-01a
 ml_out="$DIST/hey-proton-01a - mailing lists.sieve"
 grep -q 'header :comparator "i;unicode-casemap" :contains "list-id" "<v6ops.ietf.org>"' "$ml_out" \
-    && grep -q 'fileinto "lists";' "$ml_out" \
+    && grep -q 'fileinto "mailing-lists";' "$ml_out" \
     && grep -q 'fileinto "Lists/v6ops";' "$ml_out" \
     && ok "mailing-lists.txt expands into a List-Id fileinto rule" \
     || fail "mailing-lists.txt expands into a List-Id fileinto rule"
