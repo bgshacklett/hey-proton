@@ -1,0 +1,19 @@
+scripts/upload.sh
+  s_2551a12c425685::t_9595fc67100a9b 144-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "2fbba6420e331aac52cb31db826c64342d84de7d",
+  "prompts": {},
+  "sessions": {
+    "s_2551a12c425685": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "29aa199a-f4a3-415a-87ba-507eedb71fe7",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Brian G. Shacklett <brian@digital-traffic.net>"
+    }
+  }
+}
