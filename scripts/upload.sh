@@ -141,7 +141,9 @@ fi
 if [[ ${#target_files[@]} -eq 0 ]]; then
     while IFS= read -r -d '' f; do
         target_files+=("$f")
-    done < <(find "$dist_dir" -name "hey-proton-*.sieve" -print0 | sort -z)
+    # Bytewise sort: locale collation ignores punctuation and would put
+    # "01a - …" ahead of "01 - …", which becomes the Proton execution order.
+    done < <(find "$dist_dir" -name "hey-proton-*.sieve" -print0 | LC_ALL=C sort -z)
 fi
 
 if [[ ${#target_files[@]} -eq 0 ]]; then
