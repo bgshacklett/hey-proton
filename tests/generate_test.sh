@@ -20,7 +20,7 @@ fail() { printf "FAIL  %s\n" "$1"; fail=$((fail + 1)); (( FAIL_FAST )) && exit 1
 NEEDS_CLEANUP=()
 
 setup_fixtures() {
-    for src_name in "contact-groups.txt" "alias-patterns.txt"; do
+    for src_name in "contact-groups.txt" "alias-patterns.txt" "mailing-lists.txt"; do
         if [[ ! -f "private/$src_name" ]]; then
             cp "private-examples/$src_name" "private/$src_name"
             NEEDS_CLEANUP+=("private/$src_name")
@@ -63,11 +63,11 @@ run_generate_with_limit() {
 
 run_generate
 
-# 1. Always produces exactly one output file per source filter (02–08)
+# 1. Always produces exactly one output file per source filter (01–07 plus 01a)
 count=$(ls "$DIST"/hey-proton-*.sieve 2>/dev/null | wc -l | tr -d ' ')
-[[ "$count" -eq 7 ]] \
-    && ok "produces exactly 7 output files (one per source filter)" \
-    || fail "produces exactly 7 output files (one per source filter) (got $count)"
+[[ "$count" -eq 8 ]] \
+    && ok "produces exactly 8 output files (one per source filter)" \
+    || fail "produces exactly 8 output files (one per source filter) (got $count)"
 
 # 2. Setup prepended to each output: first line is the setup section header
 setup_header="# hey-proton: 00 - setup (prepended to every filter)"
@@ -96,6 +96,16 @@ grep -q "$filter05_marker" "$DIST/hey-proton-01 - spam & ignored.sieve" 2>/dev/n
     && fail "filter 05 content must not be in hey-proton-01 - spam & ignored" \
     || ok "filter 05 content not in hey-proton-01 - spam & ignored"
 
+# 4a. Mailing-list rule expands from mailing-lists.txt into hey-proton-01a
+ml_out="$DIST/hey-proton-01a - mailing lists.sieve"
+grep -q 'header :comparator "i;unicode-casemap" :contains "list-id" "<v6ops.ietf.org>"' "$ml_out" \
+    && grep -q 'fileinto "Lists/v6ops";' "$ml_out" \
+    && ok "mailing-lists.txt expands into a List-Id fileinto rule" \
+    || fail "mailing-lists.txt expands into a List-Id fileinto rule"
+grep -q '^{{mailing-lists.txt' "$ml_out" \
+    && fail "mailing-lists macro must be expanded, not left verbatim" \
+    || ok "mailing-lists macro expanded"
+
 # 5. Stale output files are removed on re-run
 touch "$DIST/hey-proton-99.sieve"
 run_generate
@@ -103,21 +113,21 @@ run_generate
     && ok "stale output files removed on re-run" \
     || fail "stale output files removed on re-run"
 
-# 6. CHARACTER_LIMIT=0 (no warning check) still produces 7 output files
+# 6. CHARACTER_LIMIT=0 (no warning check) still produces 8 output files
 rm -f "$DIST"/hey-proton-*.sieve
 run_generate_with_limit 0
 nosplit_count=$(ls "$DIST"/hey-proton-*.sieve 2>/dev/null | wc -l | tr -d ' ')
-[[ "$nosplit_count" -eq 7 ]] \
-    && ok "CHARACTER_LIMIT=0 still produces 7 output files" \
-    || fail "CHARACTER_LIMIT=0 still produces 7 output files (got $nosplit_count)"
+[[ "$nosplit_count" -eq 8 ]] \
+    && ok "CHARACTER_LIMIT=0 still produces 8 output files" \
+    || fail "CHARACTER_LIMIT=0 still produces 8 output files (got $nosplit_count)"
 
 # 7. CHARACTER_LIMIT does not affect file count (warns but does not split)
 rm -f "$DIST"/hey-proton-*.sieve
 run_generate_with_limit 4000
 warn_count=$(ls "$DIST"/hey-proton-*.sieve 2>/dev/null | wc -l | tr -d ' ')
-[[ "$warn_count" -eq 7 ]] \
-    && ok "CHARACTER_LIMIT=4000 produces 7 output files (warns, does not split)" \
-    || fail "CHARACTER_LIMIT=4000 produces 7 output files (warns, does not split) (got $warn_count)"
+[[ "$warn_count" -eq 8 ]] \
+    && ok "CHARACTER_LIMIT=4000 produces 8 output files (warns, does not split)" \
+    || fail "CHARACTER_LIMIT=4000 produces 8 output files (warns, does not split) (got $warn_count)"
 
 # 8. With any CHARACTER_LIMIT, each output file contains setup content
 for f in "$DIST"/hey-proton-*.sieve; do

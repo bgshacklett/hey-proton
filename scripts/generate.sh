@@ -21,6 +21,7 @@ setup_file="$input_dir/00 - setup.sieve"
 # All filter files in processing order (setup is handled separately)
 filter_files=(
     "$input_dir/01 - spam & ignored.sieve"
+    "$input_dir/01a - mailing lists.sieve"
     "$input_dir/02 - screened out.sieve"
     "$input_dir/03 - label decoration.sieve"
     "$input_dir/04 - alerts.sieve"
@@ -35,6 +36,7 @@ list_files=(
     "private/contact-groups.txt"
     "private/alias-patterns.txt"
     "private/address-patterns.txt"
+    "private/mailing-lists.txt"
 )
 
 # Array to store regex patterns
@@ -43,6 +45,7 @@ regex_patterns=(
     '\{\{contact-groups\.txt fileinto expansion( excluding (.*))?\}\}'
     '\{\{alias-patterns\.txt string expansion\}\}'
     '\{\{address-patterns\.txt string expansion\}\}'
+    '\{\{mailing-lists\.txt fileinto expansion\}\}'
 )
 
 # Array to store corresponding function names
@@ -51,6 +54,7 @@ expansion_functions=(
     "expand_contact_groups_fileinto"
     "expand_to_string_syntax"
     "expand_to_string_syntax"
+    "expand_mailing_lists_fileinto"
 )
 
 # ============================================================
@@ -213,6 +217,26 @@ expand_contact_groups_fileinto() {
     done
 
     # Print the formatted elements with the leading whitespace from the parsed line
+    print_and_clear_list_elements
+}
+
+expand_mailing_lists_fileinto() {
+    # Each line is "<list-id domain> <folder>"; emit a self-contained rule
+    # that files by List-Id and stops. Blank lines and '#' comments are skipped.
+    local rules=()
+    for element in "${list_elements[@]}"; do
+        [[ -z "$element" || "$element" == \#* ]] && continue
+        local list_id folder
+        list_id=$(printf "%s" "$element" | awk '{print $1}')
+        folder=$(printf "%s" "$element" | awk '{ $1=""; sub(/^ /, ""); print }')
+        if [[ -z "$list_id" || -z "$folder" ]]; then
+            printf "Error: bad mailing-lists.txt line: %s\n" "$element" >&2
+            exit 1
+        fi
+        rules+=("$(printf 'if header :comparator "i;unicode-casemap" :contains "list-id" "<%s>" {\n  fileinto "%s";\n  stop;\n}' "$list_id" "$folder")")
+    done
+    list_elements=("${rules[@]}")
+
     print_and_clear_list_elements
 }
 

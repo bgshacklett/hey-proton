@@ -7,4 +7,5 @@ Files:
 - `contact-groups.txt` — one Proton contact group name per line
 - `alias-patterns.txt` — regex patterns for structured email aliases
 - `address-patterns.txt` — regex patterns for test/catch-all addresses
+- `mailing-lists.txt` — `<list-id domain> <folder>` per line, for `01a - mailing lists.sieve`
 - `proton-session.json` — browser session credentials for `scripts/upload.sh` (see `docs/proton-api.md`)

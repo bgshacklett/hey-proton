@@ -174,6 +174,7 @@ Format for each text file is one entry per line. Refer to `/private-examples` fo
 
 - `contact-groups.txt` - list your Proton contact groups in here
 - `alias-patterns.txt` - regex patterns for structured email aliases where labelling information is encoded in the address (e.g. `company.category@domain.com`)
+- `mailing-lists.txt` - discussion lists to file by `List-Id` into their own folder, one `<list-id domain> <folder>` per line (e.g. `v6ops.ietf.org Lists/v6ops`); the folder must already exist. Handled by `01a - mailing lists.sieve`, before any contact-based stage.
 
 ## Development
 
