@@ -79,7 +79,11 @@ if allof(
   expire "day" "${paper_trail_expiry_relative_days}";
   fileinto "expiring";
   if string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}" {
-    fileinto "inbox";
+    if header :list "from" ":addrbook:personal?label=Important" {
+      fileinto "inbox";
+    } else {
+      fileinto "Triage";
+    }
   }
   stop;
 }
@@ -137,7 +141,11 @@ if allof(
     fileinto "alerts";
     fileinto "needs admin";
     if string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}" {
-      fileinto "inbox";
+      if header :list "from" ":addrbook:personal?label=Important" {
+        fileinto "inbox";
+      } else {
+        fileinto "Triage";
+      }
     }
     stop;
   }
@@ -156,7 +164,11 @@ if allof(
     fileinto "alerts";
     fileinto "needs admin";
     if string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}" {
-      fileinto "inbox";
+      if header :list "from" ":addrbook:personal?label=Important" {
+        fileinto "inbox";
+      } else {
+        fileinto "Triage";
+      }
     }
     stop;
   }
@@ -172,7 +184,11 @@ if allof(
     fileinto "alerts";
     fileinto "needs admin";
     if string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}" {
-      fileinto "inbox";
+      if header :list "from" ":addrbook:personal?label=Important" {
+        fileinto "inbox";
+      } else {
+        fileinto "Triage";
+      }
     }
     stop;
   }
@@ -247,7 +263,11 @@ if allof(
   ) {
     fileinto "alerts";
     if string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}" {
-      fileinto "inbox";
+      if header :list "from" ":addrbook:personal?label=Important" {
+        fileinto "inbox";
+      } else {
+        fileinto "Triage";
+      }
     }
     stop;
   }

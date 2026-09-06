@@ -36,7 +36,11 @@ if allof(
   string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}"
 ) {
   fileinto "needs admin";
-  fileinto "inbox";
+  if header :list "from" ":addrbook:personal?label=Important" {
+    fileinto "inbox";
+  } else {
+    fileinto "Triage";
+  }
   stop;
 }
 
@@ -56,7 +60,7 @@ if allof(
 if allof(
   string :comparator "i;ascii-numeric" :value "ge" "${received_julian_day}" "${migration_julian_day}",
 not header :list "from" ":addrbook:personal") {
-  fileinto "inbox";
+  fileinto "Triage";
   stop;
 }
 
