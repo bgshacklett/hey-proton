@@ -1,0 +1,25 @@
+README.md
+  s_2551a12c425685::t_50bc26a888a50a 177
+"filters/01a - mailing lists.sieve"
+  s_2551a12c425685::t_f0fc8103fab6e8 13,15-17
+scripts/generate.sh
+  s_2551a12c425685::t_a9c4ae014ca30b 236
+tests/generate_test.sh
+  s_2551a12c425685::t_23c9ff7239bdca 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "331a14101af2276c645b48bc5641a2cfc1d82c38",
+  "prompts": {},
+  "sessions": {
+    "s_2551a12c425685": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "29aa199a-f4a3-415a-87ba-507eedb71fe7",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Brian G. Shacklett <brian@digital-traffic.net>"
+    }
+  }
+}
