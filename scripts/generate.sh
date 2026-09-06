@@ -233,7 +233,7 @@ expand_mailing_lists_fileinto() {
             printf "Error: bad mailing-lists.txt line: %s\n" "$element" >&2
             exit 1
         fi
-        rules+=("$(printf 'if header :comparator "i;unicode-casemap" :contains "list-id" "<%s>" {\n  fileinto "%s";\n  stop;\n}' "$list_id" "$folder")")
+        rules+=("$(printf 'if header :comparator "i;unicode-casemap" :contains "list-id" "<%s>" {\n  fileinto "lists";\n  fileinto "%s";\n  stop;\n}' "$list_id" "$folder")")
     done
     list_elements=("${rules[@]}")
 
